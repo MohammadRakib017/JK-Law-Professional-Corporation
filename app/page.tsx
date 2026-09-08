@@ -36,8 +36,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen relative flex flex-col bg-[#FBFBFA] text-[#1A1918]">
-      {/* Sticky Premium Navbar */}
-      <Navbar onOpenConsultation={() => handleOpenConsultation()} />
+      {/* Sticky Premium Navbar with Services Dropdown */}
+      <Navbar
+        onOpenConsultation={() => handleOpenConsultation()}
+        onSelectService={handleSelectService}
+      />
 
       {/* Hero Section with Cinematic 3D Scene */}
       <Hero onOpenConsultation={() => handleOpenConsultation()} />
