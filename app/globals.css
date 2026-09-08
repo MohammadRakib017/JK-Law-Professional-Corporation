@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: "Cormorant Garamond", Georgia, serif;
+    --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: #1A1918;
+    background-color: #FBFBFA;
+  }
+
+  h1, h2, h3, .font-serif-luxury {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Custom smooth glassmorphism and subtle luxury legal accents */
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(229, 226, 220, 0.85);
+}
+
+.glass-panel-dark {
+  background: rgba(18, 19, 22, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.subtle-red-glow {
+  box-shadow: 0 10px 30px -10px rgba(155, 34, 38, 0.18);
+}
+
+.subtle-gold-accent {
+  background: linear-gradient(135deg, #c5a059 0%, #dfc282 50%, #b89347 100%);
+}

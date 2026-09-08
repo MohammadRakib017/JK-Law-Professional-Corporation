@@ -1,0 +1,6 @@
+{
+  "name": "JK Law Professional Corporation",
+  "description": "JK Law Professional Corporation provides professional legal services in Richmond Hill, Ontario, including family law, criminal law, civil litigation, personal injury, real estate, immigration, business law and estate planning.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
