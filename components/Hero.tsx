@@ -15,6 +15,8 @@ export default function Hero({ onOpenConsultation }: HeroProps) {
     const servicesEl = document.querySelector('#services');
     if (servicesEl) {
       servicesEl.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = '/services';
     }
   };
 

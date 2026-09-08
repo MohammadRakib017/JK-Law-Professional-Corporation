@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Scale, Phone, Mail, MapPin, ArrowUp } from 'lucide-react';
 import { FIRM_DETAILS, PRACTICE_AREAS } from '@/lib/legalData';
 
@@ -117,34 +118,34 @@ export default function Footer({ onOpenPrivacy, onOpenTerms, onOpenConsultation 
             </h4>
             <ul className="space-y-2.5 text-xs text-[#9E9B93]">
               <li>
-                <a href="#hero" className="hover:text-white transition-colors">
+                <Link href="/" prefetch={false} className="hover:text-white transition-colors">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#about" className="hover:text-white transition-colors">
+                <Link href="/about" prefetch={false} className="hover:text-white transition-colors">
                   About the Firm
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#services" className="hover:text-white transition-colors">
+                <Link href="/services" prefetch={false} className="hover:text-white transition-colors">
                   Legal Services
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#why-us" className="hover:text-white transition-colors">
+                <Link href="/why-us" prefetch={false} className="hover:text-white transition-colors">
                   Why JK Law
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#interactive-areas" className="hover:text-white transition-colors">
+                <Link href="/practice-areas" prefetch={false} className="hover:text-white transition-colors">
                   Practice Areas
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#contact" className="hover:text-white transition-colors">
+                <Link href="/contact" prefetch={false} className="hover:text-white transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -157,9 +158,9 @@ export default function Footer({ onOpenPrivacy, onOpenTerms, onOpenConsultation 
             <ul className="grid grid-cols-1 gap-2 text-xs text-[#9E9B93]">
               {PRACTICE_AREAS.slice(0, 6).map((area) => (
                 <li key={area.id}>
-                  <a href="#services" className="hover:text-[#9B2226] transition-colors">
+                  <Link href={`/services?service=${area.id}`} prefetch={false} className="hover:text-[#9B2226] transition-colors">
                     {area.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

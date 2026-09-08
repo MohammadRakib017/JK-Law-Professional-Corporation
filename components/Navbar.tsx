@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Phone,
   Menu,
@@ -12,12 +14,11 @@ import {
   HeartHandshake,
   ShieldAlert,
   Activity,
-  Home,
+  Home as HomeIcon,
   Briefcase,
   Globe2,
   FileCheck,
   Users,
-  Sparkles,
 } from 'lucide-react';
 import { FIRM_DETAILS, PRACTICE_AREAS, PracticeArea } from '@/lib/legalData';
 
@@ -31,7 +32,7 @@ const serviceIconMap: Record<string, React.ReactNode> = {
   ShieldAlert: <ShieldAlert className="w-4 h-4" />,
   Scale: <Scale className="w-4 h-4" />,
   Activity: <Activity className="w-4 h-4" />,
-  Home: <Home className="w-4 h-4" />,
+  Home: <HomeIcon className="w-4 h-4" />,
   Briefcase: <Briefcase className="w-4 h-4" />,
   Globe2: <Globe2 className="w-4 h-4" />,
   FileCheck: <FileCheck className="w-4 h-4" />,
@@ -39,6 +40,8 @@ const serviceIconMap: Record<string, React.ReactNode> = {
 };
 
 export default function Navbar({ onOpenConsultation, onSelectService }: NavbarProps) {
+  const pathname = usePathname();
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
@@ -47,7 +50,7 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 30) {
+      if (window.scrollY > 20) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -82,37 +85,30 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'About', href: '#about' },
-    { name: 'Services', href: '#services', isDropdown: true },
-    { name: 'Why JK Law', href: '#why-us' },
-    { name: 'Practice Areas', href: '#interactive-areas' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Services', href: '/services', isDropdown: true },
+    { name: 'Why JK Law', href: '/why-us' },
+    { name: 'Practice Areas', href: '/practice-areas' },
+    { name: 'Contact', href: '/contact' },
   ];
-
-  const handleLinkClick = (href: string) => {
-    setMobileMenuOpen(false);
-    setServicesDropdownOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   const handleSelectServiceItem = (service: PracticeArea) => {
     setServicesDropdownOpen(false);
     setMobileMenuOpen(false);
 
-    // Scroll smoothly to the services section
-    const element = document.querySelector('#services');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Open the service detail modal
-    if (onSelectService) {
+    if (onSelectService && pathname === '/services') {
       onSelectService(service);
+    } else {
+      router.push(`/services?service=${service.id}`);
     }
+  };
+
+  const isLinkActive = (href: string) => {
+    if (href === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(href);
   };
 
   return (
@@ -121,14 +117,15 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
         id="main-navigation"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'bg-white/90 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.04)] border-b border-[#E5E2DC]/80 py-3.5'
-            : 'bg-transparent py-5'
+            ? 'bg-white/95 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.04)] border-b border-[#E5E2DC]/80 py-3.5'
+            : 'bg-white/70 backdrop-blur-xs py-4 border-b border-[#EAE7E0]/60'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo / Brand */}
-          <a
-            href="#hero"
+          <Link
+            href="/"
+            prefetch={false}
             id="nav-logo"
             className="group flex items-center gap-3 text-left focus:outline-none focus:ring-2 focus:ring-[#9B2226] rounded-md p-1"
           >
@@ -143,11 +140,13 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
                 Professional Corporation
               </span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Nav Items */}
-          <nav className="hidden md:flex items-center gap-7" aria-label="Main Navigation">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-7" aria-label="Main Navigation">
             {navLinks.map((link) => {
+              const active = isLinkActive(link.href);
+
               if (link.isDropdown) {
                 return (
                   <div
@@ -157,31 +156,43 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
                     onMouseEnter={() => setServicesDropdownOpen(true)}
                     onMouseLeave={() => setServicesDropdownOpen(false)}
                   >
-                    <button
-                      id="nav-link-services"
-                      type="button"
-                      onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
-                      className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors relative py-1 focus:outline-none cursor-pointer ${
-                        servicesDropdownOpen
-                          ? 'text-[#9B2226]'
-                          : 'text-[#4A4844] hover:text-[#9B2226]'
-                      }`}
-                      aria-expanded={servicesDropdownOpen}
-                      aria-haspopup="true"
-                    >
-                      <span>{link.name}</span>
-                      <ChevronDown
-                        className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                          servicesDropdownOpen ? 'rotate-180 text-[#9B2226]' : 'text-[#8C8880]'
+                    <div className="flex items-center">
+                      <Link
+                        href="/services"
+                        prefetch={false}
+                        id="nav-link-services"
+                        className={`inline-flex items-center gap-1 text-sm font-medium transition-colors relative py-1 focus:outline-none ${
+                          active
+                            ? 'text-[#9B2226] font-semibold'
+                            : 'text-[#4A4844] hover:text-[#9B2226]'
                         }`}
-                      />
+                      >
+                        <span>{link.name}</span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
+                        className={`p-1 ml-0.5 rounded-md hover:bg-black/5 transition-colors focus:outline-none ${
+                          servicesDropdownOpen ? 'text-[#9B2226]' : 'text-[#8C8880]'
+                        }`}
+                        aria-expanded={servicesDropdownOpen}
+                        aria-label="Toggle Services Dropdown"
+                      >
+                        <ChevronDown
+                          className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                            servicesDropdownOpen ? 'rotate-180 text-[#9B2226]' : 'text-[#8C8880]'
+                          }`}
+                        />
+                      </button>
+
                       {/* Underline indicator */}
                       <span
                         className={`absolute bottom-0 left-0 h-[2px] bg-[#9B2226] transition-all duration-200 ${
-                          servicesDropdownOpen ? 'w-full' : 'w-0'
+                          active || servicesDropdownOpen ? 'w-full' : 'w-0'
                         }`}
                       />
-                    </button>
+                    </div>
 
                     {/* SERVICES DROPDOWN MEGA MENU */}
                     {servicesDropdownOpen && (
@@ -190,7 +201,6 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
                         className="absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[720px] z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                       >
                         <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E2DC] shadow-[0_20px_50px_-12px_rgba(20,19,24,0.18)] p-6 backdrop-blur-xl overflow-hidden">
-                          
                           {/* Dropdown Header */}
                           <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#EFECE6]">
                             <div className="flex items-center gap-2">
@@ -202,9 +212,14 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
                                 Ontario Jurisdiction
                               </span>
                             </div>
-                            <span className="text-[11px] text-[#7A7771]">
-                              Click any category to view full legal scope
-                            </span>
+                            <Link
+                              href="/services"
+                              prefetch={false}
+                              onClick={() => setServicesDropdownOpen(false)}
+                              className="text-[11px] text-[#9B2226] hover:underline font-medium"
+                            >
+                              Go to Services Page →
+                            </Link>
                           </div>
 
                           {/* 3-Column Services Grid */}
@@ -234,14 +249,15 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
 
                           {/* Dropdown Footer Action Strip */}
                           <div className="mt-5 pt-4 border-t border-[#EFECE6] flex items-center justify-between bg-[#FCFBFA] -mx-6 -mb-6 px-6 py-3.5">
-                            <button
-                              type="button"
-                              onClick={() => handleLinkClick('#services')}
-                              className="text-xs font-semibold text-[#504E48] hover:text-[#9B2226] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                            <Link
+                              href="/services"
+                              prefetch={false}
+                              onClick={() => setServicesDropdownOpen(false)}
+                              className="text-xs font-semibold text-[#504E48] hover:text-[#9B2226] inline-flex items-center gap-1.5 transition-colors"
                             >
-                              <span>View All 9 Services on Page</span>
+                              <span>View Full Dedicated Services Page</span>
                               <ArrowRight className="w-3.5 h-3.5" />
-                            </button>
+                            </Link>
 
                             <button
                               type="button"
@@ -254,7 +270,6 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
                               Book Consultation
                             </button>
                           </div>
-
                         </div>
                       </div>
                     )}
@@ -263,14 +278,21 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
               }
 
               return (
-                <button
+                <Link
                   key={link.name}
                   id={`nav-link-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  onClick={() => handleLinkClick(link.href)}
-                  className="text-sm font-medium text-[#4A4844] hover:text-[#9B2226] transition-colors relative py-1 focus:outline-none after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#9B2226] hover:after:w-full after:transition-all after:duration-200 cursor-pointer"
+                  href={link.href}
+                  prefetch={false}
+                  className={`text-sm font-medium transition-colors relative py-1 focus:outline-none ${
+                    active
+                      ? 'text-[#9B2226] font-semibold'
+                      : 'text-[#4A4844] hover:text-[#9B2226]'
+                  } after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#9B2226] ${
+                    active ? 'after:w-full' : 'after:w-0 hover:after:w-full'
+                  } after:transition-all after:duration-200`}
                 >
                   {link.name}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -347,26 +369,38 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
 
               <div className="flex flex-col gap-1 py-5">
                 {navLinks.map((link) => {
+                  const active = isLinkActive(link.href);
+
                   if (link.isDropdown) {
                     return (
                       <div key={link.name} className="py-1">
-                        <button
-                          type="button"
-                          onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                          className="flex items-center justify-between w-full py-2.5 px-3 text-left text-base font-medium text-[#2A2927] hover:text-[#9B2226] hover:bg-[#9B2226]/5 rounded-lg transition-colors"
-                        >
-                          <span className="flex items-center gap-2">
+                        <div className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg hover:bg-[#9B2226]/5">
+                          <Link
+                            href="/services"
+                            prefetch={false}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center gap-2 text-base font-medium ${
+                              active ? 'text-[#9B2226] font-semibold' : 'text-[#2A2927]'
+                            }`}
+                          >
                             <span>Services</span>
                             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#9B2226]/10 text-[#9B2226]">
                               9 Categories
                             </span>
-                          </span>
-                          <ChevronDown
-                            className={`w-4 h-4 transition-transform duration-200 ${
-                              mobileServicesOpen ? 'rotate-180 text-[#9B2226]' : 'text-[#8C8983]'
-                            }`}
-                          />
-                        </button>
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                            className="p-1.5 text-[#8C8983] hover:text-[#9B2226]"
+                            aria-label="Expand Services"
+                          >
+                            <ChevronDown
+                              className={`w-4 h-4 transition-transform duration-200 ${
+                                mobileServicesOpen ? 'rotate-180 text-[#9B2226]' : ''
+                              }`}
+                            />
+                          </button>
+                        </div>
 
                         {/* Expandable Mobile Services List */}
                         {mobileServicesOpen && (
@@ -384,14 +418,15 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
                                 <span className="truncate">{service.name}</span>
                               </button>
                             ))}
-                            
-                            <button
-                              type="button"
-                              onClick={() => handleLinkClick('#services')}
+
+                            <Link
+                              href="/services"
+                              prefetch={false}
+                              onClick={() => setMobileMenuOpen(false)}
                               className="block w-full text-center py-2 text-[11px] font-semibold text-[#9B2226] hover:underline"
                             >
-                              View All 9 Services Overview →
-                            </button>
+                              Go to Services Full Page →
+                            </Link>
                           </div>
                         )}
                       </div>
@@ -399,14 +434,20 @@ export default function Navbar({ onOpenConsultation, onSelectService }: NavbarPr
                   }
 
                   return (
-                    <button
+                    <Link
                       key={link.name}
-                      onClick={() => handleLinkClick(link.href)}
-                      className="flex items-center justify-between py-2.5 px-3 text-left text-base font-medium text-[#2A2927] hover:text-[#9B2226] hover:bg-[#9B2226]/5 rounded-lg transition-colors"
+                      href={link.href}
+                      prefetch={false}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between py-2.5 px-3 rounded-lg text-base font-medium transition-colors ${
+                        active
+                          ? 'text-[#9B2226] font-semibold bg-[#9B2226]/5'
+                          : 'text-[#2A2927] hover:text-[#9B2226] hover:bg-[#9B2226]/5'
+                      }`}
                     >
                       <span>{link.name}</span>
                       <ChevronRight className="w-4 h-4 text-[#8C8983]" />
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
